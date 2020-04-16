@@ -1,0 +1,57 @@
+<section id="friends">
+    <h2> My Friends </h2>
+    <%
+    if(content){
+        for(var i=0;i<content.length;i++){%>
+            <p><a href="/profile?user_searched=<%=content[i].person%>"/><%=content[i].person%></a>
+            <%if(connected && content[0].pseudo==connected){%>
+            <img src="/msg.png" class="message" width="3%" height="3%" /><img src="/delete.png" class="delete" width="3%" height="3%"/>
+            <%}%>
+        </p>
+    <%}
+}%>
+</section>
+
+<script>
+$(document).ready(function(){
+    function rm(value){
+        $.ajax({
+            method:"post",
+            url:"/remove_f",
+            data:"p2="+value
+        }).done((data)=>{
+            if(data && data.message){
+                if(data.message=="success") window.location.reload()
+                else{
+                    alert("Oups, looks like there was some kind of issue on our side. Please try again later")
+                    window.location.reload()
+                }
+            }
+        })
+    }
+
+
+
+    function message(value){
+        
+    }
+
+    $(".delete").click(function(event){
+        console.log($(event.target).siblings("a").html())
+        rm($(event.target).siblings("a").html())
+    })
+
+    $(".message").click(function(event){
+        //faire un res.render de la page de chat avec comme user selected, celui sur qui on a cliqué
+    })
+})
+
+
+/* $("#delete").click(function(event){
+    //une alerte pour etre sur
+    $.post({
+        url:"/delete_friend",
+        data:"p2="+
+    })
+})*/
+</script>

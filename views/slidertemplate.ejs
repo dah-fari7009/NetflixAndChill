@@ -1,0 +1,20 @@
+<div class="model" style="display:none">
+    <p><%=current.pr%> <%=current.n%> (<span class="pseudo"><%=current.ps%></span>)</p>
+    <img src="<%=current.pp%>" width="10%" height="5%"/>
+    <p><%=current.b%></p>
+    <% if(current.common_interest){%>
+    <p> You have <%=current.common_interest%> interest(s) in common and you live <%=current.distance%> kms apart !<p>
+    <%}%>
+</div>
+
+<script>
+
+  /*   $(".like, .yuck").click(function(){
+        //change picture or button 
+
+    })
+
+    $(".model").on("swipeleft",function(event){})//==no
+    $(".model").on("swiperight",function(event){})//yes
+    */
+</script>

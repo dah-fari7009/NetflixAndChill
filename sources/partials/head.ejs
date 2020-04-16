@@ -1,0 +1,17 @@
+<nav>
+<ul>
+<li><a href="/">Home</a></li>
+<li class="livesearch"><%- include ../../views/search.ejs%></li>
+<div id="bar-right">
+<%if (connected){%>
+<li><a href="profile">My profile</a></li>
+<li><a href="chat">My chats</a></li>
+<li><a href="logout">Sign out</a></li>
+<%}
+else{%>
+<li><a href="subscribe">Sign up</a></li>
+<li><a href="login">Sign in</a></li>
+</div>
+<%}%>
+</ul>
+</nav>

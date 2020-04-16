@@ -1,0 +1,37 @@
+<section id="infos">
+    <h2>My Informations</h2>
+    <form method="post" action="/modify">
+        <%console.log(content+"  "+content[0]+"   iiii"+content[0].phone)
+        if (!connected || content[0].pseudo!=connected){%>
+        <fieldset disabled="disabled">
+        <%}%>
+            <label for="us"> Username : </label></br>
+            <p><input type="text" id="us" name="pseudo" value="<%=content[0].pseudo%>"/><span class="err" id="errpseudo"></span></p>
+            <label for="ml" > E-Mail : </label></br>
+            <p><input type="email" id="ml" name="email" value="<%=content[0].email%>"/><span class="err" id="errmail"></span></p>
+            <label for="nm"> Name </label>
+            <p><input type="text" id="nm" name="nom" value="<%=content[0].nom%>"/><span class="err" id="errnom"></span></p>
+            <label for="sm"> Surname </label>
+            <p><input type="text" id="nm" name="prenom" value="<%=content[0].prenom%>"/><span class="err" id="errprenom"></span></p>
+            <label for="dt" > BirthDay  </label>
+            <p><input type="date" id="dt" name="birthday" value="<%=content[0].birthday%>"><span class="err" id="errbirthday"></span></p>
+            <label for="gn"> Gender </label>
+            <p> <label for="f"> Female </label><input type="radio" id="f" name="genre" value="f" <%if (content[0].genre="f"){%> checked <%}%>/>
+            <label for="m"> Male </label><input type="radio" id="f" name="genre" value="m" <%if (content[0].genre="m"){%> checked <%}%>/>
+            <label for="u"> Non-binary </label><input type="radio" id="f" name="genre" value="u" <%if (content[0].genre="u"){%> checked <%}%>/></p>
+            <label for="pn"> Phone Number </label>
+            <p><input type="text" id="nm" name="phone" value="<%=content[0].phone%>"/><span class="err" id="errphone"></span></p>
+            <label for="adr"> Adress </label>
+            <p><input type="text" id="adr" name="adress" value="<%=content[0].adress%>"/><span class="err" id="erradress"></span></p>
+            <label for="cn"> Country </label>
+            <p><input type="text" id="cn" name="country" value="<%=content[0].country%>"/><span class="err" id="errcountry"></span></p>
+            <label for="ds"> A few things to know </label>
+            <p><input type="text" id="ds" name="bio" value="<%=content[0].bio%>"/><span class="err" id="errbio"></span></p>
+            <input type="submit" value="It's on !" id="send"/>
+            <input type="reset" value="Reset" name="rs"/>
+        <%if (!connected || content[0].pseudo!=connected){%>
+        </fieldset>
+        <%}%>
+    </form>
+</section>
+

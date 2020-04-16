@@ -1,0 +1,105 @@
+<section id="interests">
+<h2>My Criteria</h2>
+<%if(!connected || content[0].pseudo!=connected){%>
+    <fieldset disabled=true>
+<%}%>
+<form action="/criteria" method="post">
+    <p> A specific gender ? </p>
+    <p> <label for="f"> Female </label><input type="radio" id="f" name="gender" value="f" <%if (content[0].gender="f"){%> checked <%}%>/>
+                <label for="m"> Male </label><input type="radio" id="f" name="gender" value="m" <%if (content[0].gender="m"){%> checked <%}%>/>
+                <label for="u"> Non-binary </label><input type="radio" id="f" name="gender" value="u" <%if (content[0].gender="u"){%> checked <%}%>/>
+                <label for="a"> Any </label><input type="radio" id="a" name="gender" value="a" <%if (content[0].gender="a"){%> checked <%}%>/>
+    </p>
+    <p> How about an age range ? </p>
+    <p>
+        <label for="from"> From </label>
+        <input type="number" id="from" name="min" value="<%=(content[0].min)?content[0].min:18%>" min="18"%>/>
+        <label for="to"> To </label>
+        <input type="number" id="to" name="max" value="<%=(content[0].max)?content[0].max:100%>" min="18"%>/><span class="err" id="errmax"></span>
+    </p>
+        <input type="submit" value="Set"/>
+</form>
+
+<%if(!connected || content[0].pseudo!=connected){%>
+</fieldset>
+<%}%>
+
+<h2>My Interests</h2>
+<%if(connected && content[0].pseudo==connected){%>
+    <p> Pick at least two interests !</p>
+<%}%>
+<div id="chosen">
+    <%if(content && content[0] && content[0].interest_name){
+        for(var i=0;i<content.length;i++){%>
+            <p><span class="int"><%=content[i].interest_name%></span><img src="<%=content[i].picture%>" width="10%" height="5%"/>
+            <%if(connected && content[0].pseudo==connected && content.length>2){%>
+                <button type="button" class="rmi">X</button>
+            </p>
+            <%}
+        }
+    }%>
+</div>
+
+<%if(connected && content[0].pseudo==connected){%>
+    <div id="int_s">
+        <form action="/interested" method="post" class="searchi">
+            <input type="submit" value="+"/>
+            <input type="text" id="field" name="key" placeholder="Try being a little specific ... "/>
+        </form>
+        <ul id="searchi-result"></ul>
+    </div>
+<%}%>
+</section>
+
+<script>
+$(document).ready(function(){
+    $(document).on("click","#searchi-result li",function(event){
+        event.preventDefault()
+        console.log($(event.target).html())
+        $(".searchi input[type=text]").val($(event.target).html());
+        $("#searchi-result").html("")
+    })
+   
+    $(".searchi").on("keyup",function(){
+        console.log($(".searchi input[type=text]").val())
+        if($(".searchi input[type=text]").val()){
+            $.ajax({
+                method:"post",
+                url:"/searchi",
+                data:$(event.target).serialize()
+            }).done(function(data){
+                if(data && data.content){
+                    $("#searchi-result").empty();
+                    //here remove all the previous searches
+                    console.log(data.content)
+                    $.each(data.content,function(index,value){
+                        $("#searchi-result").append("<li>"+value.interest_name+"</li>");
+                    })
+                    $("#searchi-result").show()
+                //data:table de pseudo ou noms et prénoms, maybe tableau d'objets json resultats de la requete
+                }
+            })
+        } 
+        else  $("#searchi-result").empty();
+    })
+
+
+    $(".rmi").click(function(event){
+        event.preventDefault();
+        console.log("Mon voisin  "+$(event.target).siblings(".int").html())
+        var data="int_name="+$(event.target).siblings(".int").html()
+        console.log(data);
+            $.ajax({
+                method:'POST',
+                url:"/remove_i",
+                data:data
+            }).done(function(data){
+                if(data.message && data.message=="error"){
+                    alert("Oups, looks like there was some kind of issue on our side. Please try again later")
+                    window.location.reload()
+                }
+                else window.location.reload()
+            })
+    })
+})
+</script>

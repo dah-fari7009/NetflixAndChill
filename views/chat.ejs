@@ -1,0 +1,71 @@
+
+<div id="chat-list-container">
+    <div id="chat-header"><i class="list"></i><span>Chat List</span></p></div>
+    <div class="chat-list">
+        <ul class="list-group">
+        </ul>
+
+    </div>
+</div>
+<div id="talking_to">
+<%for var i=0;i<content.length;i++){%>
+    <p class="conv"><span class="ps"><%=content[i].pseudo%></span>:<%=content[i].last_message%></p>
+}%>
+</div>
+
+<div id="current_conv">
+<p id="chattingWith"></p>
+<div id="chatroom">
+<p id="feedback"></p>
+</div>
+<p><span id="message"></span><button id="send">Send</button></p>
+</div>
+
+<script src="/socket.io.socket.io.js"></script>
+<script>
+    $(function(){
+        var sender,recipient
+        $("#feedback").hide()
+    //when to save the conv, everytime someone clicks somewhere else where, you need to add in the database, not to lose them
+        $(".conv").click(function(event){
+            //highlight the one that has been selected
+            recipient=$(event.target).find(".ps").val()
+            $.ajax({
+                url:'/load_conv',
+                method:'POST',
+                data:"sender="+sender+"&rec="+recipient
+            }).done(function(data){
+                $.each(data.content,function(index,value){
+                    var data="<p style='"+((value.sender==sender)?"left:":"right:")+"5%;'>"+value.message+"</p>")
+                    chatroom.append(data);
+                })
+            })
+        })
+
+        var socket=io.connect("http://localhost:8080")
+        var message=$("#message")
+        var chatroom=$("#chatroom")
+
+        //Emit message
+        $("#send").click(function(){
+            socket.emit("new_message",{message:message.val(),recipient:recipient})
+        })
+
+        message.bind("keypress",()=>{
+            socket.emit('typing')
+        })
+
+        //Listen on new message
+        socket.on(
+            "new_message":(data)=>{
+                console.log(data)
+                $("feedback").hide()
+                chatroom.append("<p class='message' style='left: 5%'>"+data.username+":"+data.message+"</p>")
+            },
+            "typing":(data)=>{
+                feedback.html("<i>"+data.username+" is typing a message ..."+"</i>")
+            }
+        )
+    })
+   
+</script>

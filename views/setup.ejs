@@ -1,0 +1,22 @@
+<div id="setup">
+    <div id="first">
+    <h1> Let's get you started ... </h1>
+    </div>
+    <div id="second">
+    <%-include("interest_section",{connected:connected,content:donnees)%>
+    </div>
+    <button id="next">Done</button>
+</div>
+<script>
+
+    $("#setup div").hide();
+   $("#next").hide()
+    //$("#next, #prev").hide();
+
+    $("#first").fadeIn("slow","swing",function(){
+            $("#first").fadeOut("slow","swing",function(){
+                window.location.replace("/profile?section=interests")
+            })
+    })    
+    
+</script>

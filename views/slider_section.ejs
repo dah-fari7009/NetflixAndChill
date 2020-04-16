@@ -1,0 +1,109 @@
+<section id="<%=type%>">
+<div class="slider" style="border: solid black 1px">
+    <% console.log("Contenu  "+content)
+    for(var i=0;i<content.length;i++){%>
+            <%console.log(content[i])%>
+            <%-include('slidertemplate.ejs',{current:content[i]})%>
+    <%}%>
+    <%if (content && content.length!=0 && content[0].ps){%>
+        <div class="opinion-bar">
+            <button id="yuck">Sorry, not interested</button>
+            <button id="like">Yeah, sure</button>
+        </div>
+    <%}
+    else{
+        if(type=="requests"){%>
+            <p> You have no new friend requests ... </p>
+        <%}
+        else{%>
+            <p> Oups, there is no one matching your criteria, too bad for them !</p>
+        <%}
+    }%>
+
+</div>
+</section>
+
+<script>
+$(document).ready(function(event){
+    var i=0;
+    var divs=$(".model");
+    //divs.hide();
+
+    divs.eq(0).show()
+
+    function like(event){
+        var donnees="rec="+divs.eq(i).find(".pseudo").html()
+        $.ajax({
+        method:"post",
+            url:"/request",
+            data:donnees
+        }).done(function(data){
+            if(data && data.message=="error"){
+                alert("Oups, looks like there is some kind of issue on our side. Please try again later ")
+                window.location.reload()
+            }
+            else{
+                console.log(data.message)
+                //On change pendant un petit moment le coeur à plein peut etre
+                next(true,divs);
+            //rendre le bouton non cliquable
+            }
+        })
+    }
+
+    function dislike(event){
+        var donnees="rec="+divs.eq(i).find(".pseudo").html()
+        console.log(donnees)
+        console.log($("section").attr("id"))
+        $.ajax({
+            method:"post",
+            url:"/reject/"+$("section").attr("id"),
+            data:donnees
+        }).done(function(data){
+            if(data && data.message=="error"){
+                alert("Oups, looks like there is some kind of issue on our side. Please try again later ")
+                window.location.reload()
+            }
+            else{
+                //On change pendant un petit moment la croix, faut un ptit truc,peut etre
+                next(false,divs);
+            //rendre le bouton non cliquable
+            }
+        })
+    }
+
+    function next(liked,divs){
+        console.log(divs.length);
+        var div=divs.eq(i);
+        div.animate((liked)?{marginRight:'-200'}:{marginLeft:'-200'},"slow",function (){
+            div.remove();
+            if(divs.length==0){
+                console.log("fini");
+                window.location.reload();
+            }
+            if(i==divs.length-1) i=0;
+            else i++;
+            divs.eq(i).fadeIn(); 
+        })
+    }
+    $("#like").click(function(event){
+       like(event)
+
+    })
+
+    divs.on({
+        swipeleft:function(event){
+        dislike(event)
+        },
+        swiperight:function(event){
+            like(event)
+        }
+    })
+
+
+    
+    $("#yuck").click(function(event){
+        dislike(event)
+    })
+})
+</script>

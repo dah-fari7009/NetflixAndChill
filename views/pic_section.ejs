@@ -1,0 +1,133 @@
+<style>
+    td{
+        height:50vh;
+        width:50vh;
+        text-align:middle;
+    }
+
+    .img {
+        padding: 15px;
+        text-align: center;
+        font-size: 14px;
+        position:relative
+    }
+    .img img {
+        width: 80%;
+    }
+    .img .cap{
+    }
+
+    #add-desc{
+        position:fixed;
+        text-align:center;
+        display:none;
+        width:100%;
+        height:100%;
+        top:0;
+        left:0;
+        right:0;
+        bottom:0;
+        background-color: rgba(0,0,0,0.5); 
+        z-index: 2; /
+        cursor: pointer; /* Add a pointer on hover */
+    }
+
+    #add-desc img{
+        width:50vh;
+        height:50vh
+    }
+</style>
+
+<section id="photos">
+<h2>My Photos</h2>
+<p><%=content.pseudo%></p>
+<%if (connected && content[0].pseudo==connected){%>
+<%console.log("je suis connecté")%>
+<form id="frmUploader"  enctype="multipart/form-data" action="/upload" method="post">
+<input type="file" name="imgUploader"/>
+<button type="button" id="file-select-button">Add a new photo</button>
+<button id="submit">+</button>
+</form>
+
+<div id="add-desc">
+<img src=""/>
+<form id="add-pic" action="/store"/>
+<input type="hidden" name="filePath" value="" id="hd"/>
+<input type="text" name="desc"/><span class="err" id="errdesc"></span></p>
+<input type="submit" value="Add"/>
+</form>
+<span id="status"></span>
+</div>
+<%}%>
+<%if(content && content[0].img_url){%>
+<table>
+<tr>
+    <%for(var i=0;i<content.length;i++){%>
+        <td class="img">
+        <img id="img<%=i%>" src="<%=content[i].img_url%>" />
+        <%if (connected && content[0].pseudo==connected){%>
+        <button type="button" class="rm">X</button>
+        <%}
+        else{%>
+        <fieldset disabled=true>
+        <%}%>
+        <form method="post" action="/caption"/>
+            <input type="hidden" name="filePath" value="<%=content[i].img_url%>"/>
+            <input type="text" name="desc" value="<%=content[i].caption%>" class="cap"/>
+            <input type="submit" value="Edit" class="cap"/>
+        </form>
+        <%if (!connected || content[0].pseudo!=connected){%>
+        </fieldset>
+        <%}%>
+        </td>
+        <%
+        if(i!=0 && i%4==0){%>
+            </tr><tr>
+        <%}
+    }
+}%>
+</tr></table>
+</section>
+
+<script>
+//Make the popup stuff a bit better
+//$("#add-desc").hide()
+$(document).ready(function(){
+    $("#file-select-button").click(function(event){
+        $("#frmUploader input").click();
+    })  
+
+function whatToDoNext(message){
+    //Popup pour l'ajout
+    console.log("je suis ici")
+    console.log(message)
+    $("#add-desc img").attr("src",message);
+    $("#hd").attr("value",message)
+    $("#add-desc").show();
+}
+
+$("#frmUploader").submit(function(event){
+    uploadfile(event,whatToDoNext);
+})
+
+$(".rm").click(function(event){
+    event.preventDefault();
+    console.log($(event.target).siblings("img").length)
+    var data="filePath="+$(event.target).siblings("img").attr("src")
+    console.log(data);
+    $.ajax({
+        method:'POST',
+        url:"/remove_p",
+        data:data
+    }).done(function(data){
+        if(data.message && data.message=="error"){
+            alert("Oups, looks like there was some kind of issue on our side. Please try again later")
+            window.location.reload()
+        }
+        else window.location.reload()
+    })
+})
+})
+
+</script>
+

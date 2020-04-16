@@ -1,0 +1,32 @@
+<div id="menu-bar">
+<ul class="bar">
+<li><a href="#infos">Who Am I</a></li>
+<li><a href="#photos"> A few pictures</a></li>
+<li><a href="#matches">What I Like</a></li>
+</ul>
+<button class="infos">Who Am I</button>
+<button class="photos">A few pictures</button>
+<button class="matches">What Do I like</button>
+</div>
+
+<div id="content">
+<section id="infos">
+<h2>My Informations</h2>
+
+</section>
+
+<section id="photos">
+<h2>My Photos</h2>
+</section>
+
+<section id="matches">
+<%
+//retirer le coloriage en bleu par defaur quand on clique sur un bouton
+//Put a bar with the 3 divs and change on click
+//var query="SELECT pseudo from users natural join interests where ... and location and user matches the other things the person wanted"
+//Ou produit cartésien si pas plus de 5 interets et on prend les lignes noms tels que il exist au moinns 2 lignes avec les deux égaux, peut etre order by le plus de matches, ptet create view pour aboir moins de lignes dans la table
+//SELECT pseudo FROM (SELECT * FROM interests where pseudo=? as m1),interests i1 where i.pseudo!=? and 
+%>
+<h2>My Matches</h2>
+</section>
+</div>

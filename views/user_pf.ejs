@@ -1,0 +1,122 @@
+<style>
+body{
+    background:none;
+}
+</style>
+<div id="above">
+<div id="cover-picture">
+    <img src="<%=donnees[0].cover_picture%>" style="width:100%;height:100%">
+    <form class="frmUploader" enctype="multipart/form-data" action="/change_cp" method="post">
+        <input type="file" name="imgUploader"/>
+        <span id="c-pic"><button type="button" class="change">Choose</button> <input type="submit" value="+"/></span>
+    </form>
+</div>
+<div id="bio">
+<span><%=donnees[0].prenom%> <%=donnees[0].nom%> ( <span id="ps"><%=donnees[0].pseudo%></span>) </span></br>
+    <%=donnees[0].bio%></br>
+<%console.log("Pseudo"+donnees+donnees[0])%>
+<%//faire un truc pour rajouter le user_seached dans le href
+if(donnees[0].pseudo!=connected){%>
+    <%console.log("Pseudo"+donnees[0].pseudo+" "+donnees[0].status)%>
+    <%if (donnees[0].status==null){%>
+    <button id="req" class="status">Send friend request</button>
+    <%}
+    else if (donnees[0].status==1){%>
+        <button class="status"> Friends </button>
+    <%}
+    else if (donnees[0].status==0){
+        if(donnees[0].person1=connected){%>
+            <button class="status"> Request sent </button>
+        <%}
+        else {%>
+            <button id="req" class="status"> Accept request </button>
+        <%}
+    }
+}%> 
+</div>
+</div>
+
+<div id="menu-bar">
+    <div id="profile-picture">
+        <img src="<%=donnees[0].profile_picture%>" style="width:100%"/>
+        <form class="frmUploader" enctype="multipart/form-data" action="/change_pp" method="post">
+        <input type="file" name="imgUploader" />
+        <span id="p-pic"><button type="button" class="change">Choose</button> <input type="submit" value="+"/></span>
+        </form>
+    </div>
+<ul class="bar">
+<%var extra=(searched)?("&user_searched="+searched):""%>
+<li><a href="/profile?section=infos<%=extra%>">Who Am I</a></li>
+<li><a href="/profile?section=photos<%=extra%>"> A few pictures</a></li>
+<li><a href="/profile?section=interests<%=extra%>">What I Like</a></li>
+<li><a href="/profile?section=friends<%=extra%>">Who I Befriended</a></li>
+<%if(!searched){%>
+<li><a href="/profile?section=requests">Who Befriended Me</a></li>
+<li><a href="/profile?section=matches">Who I Match With</a></li>
+<%}%>
+</ul>
+</div>
+
+<div id="content">
+<%console.log("Donnees "+donnees[0])
+var section=null;
+if(display=="infos") section="info_section"
+else if(display=="photos") section="pic_section"
+else if(display=="interests") section="interest_section"
+else if(display=="friends") section="friend_section"
+else if(display=="requests" || display=="matches")section="slider_section"
+
+console.log(section)
+ if(section){%>
+     <%-include(section,{connected:connected,content:donnees,type:display})%>
+<%}%>
+</div>
+
+<script>
+$(document).ready(function(){
+   // $("section").hide();
+
+
+   $(".change").click(function(event){
+       console.log($(event.target).parent().siblings("input[type=file]"))
+       $(event.target).parent().siblings("input[type=file]").click();
+        //$(this).unbind("submit").submit()
+    })
+
+    function whatsNext(message){
+        window.location.replace("/profile")
+    }
+    $(".frmUploader").submit(function(event){
+        uploadfile(event,whatsNext)
+    })
+
+    $("#req").click(function(event){
+        event.preventDefault();
+            var donnees="rec="+$("#ps").html()
+            console.log(donnees)
+            $.ajax({
+                method:"post",
+                url:'/request',
+                data:donnees,
+            }).done(function(data){
+                if(data && data.message=="error"){
+                    alert("Oups, looks like there is some kind of issue on our side. Please try again later ")
+                    window.location.reload()
+                }
+                else if(data.message="anonymous") window.location.replace("/login");
+                else {
+                    window.location.reload()
+                   /* $(event.target).html(data.message);
+                    $(event.target).attr("disabled","disabled")*/
+
+                //rendre le bouton non cliquable
+                }
+            })
+        })
+    //maybe save the previous page that is not the current and redirect after login
+
+})
+
+
+
+</script>
